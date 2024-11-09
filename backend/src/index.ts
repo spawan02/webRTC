@@ -11,24 +11,24 @@ wss.on('connection',(ws)=>{
     ws.on('error',console.error)
     
     ws.on('open',()=>{
-        console.log('user connected to websocket    ')
+        console.log('user connected to websocket')
     })
 
     ws.on('message',(data:any)=>{
         const message = JSON.parse(data)
         if(message.type === 'sender'){
-            senderSocket = ws;
+            senderSocket = ws;  
         } else if(message.type === "receiver"){
             receiverSocket = ws
         } else if (message.type === "createOffer"){
-            receiverSocket?.send(JSON.stringify({type: "createOffer", sdp: message }))
+            receiverSocket?.send(JSON.stringify(message))
         } else if(message.type === "createAnswer"){
-            senderSocket?.send(JSON.stringify({type: 'createAnswer', sdp: message.sdp }))
+            senderSocket?.send(JSON.stringify(message))
         } else if(message.type === "iceCandidate"){
             if(ws === senderSocket){
-                receiverSocket?.send(JSON.stringify({type: 'iceCandidate', candidate: message.candidate}))
+                receiverSocket?.send(JSON.stringify(message))
             }else if(ws === receiverSocket){
-                senderSocket?.send(JSON.stringify({type: "iceCandidate", candidate: message.candidate}))
+                senderSocket?.send(JSON.stringify(message))
             }
         }
     })
