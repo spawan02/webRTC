@@ -27,7 +27,7 @@ export default function Receiver() {
     setRtcConn(pc);
     socket.onopen = () => {
       socket.send(JSON.stringify({ type: "receiver" }));
-      console.log("socket conne   cted on receiver");
+      console.log("socket connected on receiver");
     };
     socket.onmessage = async (event) => {
       const message = JSON.parse(event.data);
@@ -43,12 +43,6 @@ export default function Receiver() {
           pc.addIceCandidate(message.candidate);
         }
       }
-      //   setTimeout(()=>{
-      //     const track1 = pc.getTransceivers()[0].receiver.track
-      //     if (track1.kind === "video" && videoRef.current) {
-      //         videoRef.current.srcObject = new MediaStream([track1])
-      //     }
-      //   }, 5000)
     };
   }, []);
 
@@ -59,3 +53,4 @@ export default function Receiver() {
     </>
   );
 }
+

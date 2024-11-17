@@ -17,7 +17,9 @@ export default function Sender() {
 
   const startSendingVideo = async () => {
     if (!socket) return;
-    const pc = new RTCPeerConnection();
+    const pc = new RTCPeerConnection({
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+    });
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: false,
