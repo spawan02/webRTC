@@ -9,47 +9,71 @@ import {
     ConnectionState,
     DisconnectButton,
     FocusLayout, 
-    ParticipantAudioTile
+    ParticipantAudioTile,
+    ParticipantName,
+    VideoConference,
+    AudioTrack,
+    ChatToggle,
+    TrackToggle,
+    StartAudio,
+    FocusToggle
   } from '@livekit/components-react';
   
   import '@livekit/components-styles';
   import { Track } from 'livekit-client';
   import { CarouselLayout } from "@livekit/components-react";
+import { useRecoilValue } from 'recoil';
+import { tokenState } from '@/store/user';
+import { useNavigate } from 'react-router-dom';
 
-  const getToken = async()=>{
-    const response = await fetch(`${import.meta.env.VITE_URL}/token`,{
-      method: 'GET',
-      headers:{
-        'Content-Type': 'application/json'
-      }
-    })
-    const data = await response.json()
-    return data.token
-  }
+  export default function Liveapp() {
+    const token = useRecoilValue(tokenState)
+    console.log(token)
+    const navigate = useNavigate()
+  // const getToken = async(userId:string)=>{
+  //   const response = await fetch(`${import.meta.env.VITE_URL}/token?param=${userId}`,{
+  //     method: 'GET',
+  //     headers:{
+  //       'Content-Type': 'application/json'
+  //     }
+  //   })
+  //   const data = await response.json()
+  //   return data.token
+  // }
 
   const serverUrl = import.meta.env.VITE_NEXT_PUBLIC_LK_SERVER_URL
-  const token = await getToken()
-  
-  export default function Liveapp() {
-    return (
-      <LiveKitRoom
-        video={true}
-        audio={true}
-        token={token}
-        serverUrl={serverUrl}
-        data-lk-theme="default"
-        style={{ height: '100vh' }}
-      >
-        <MyVideoConference />
-        <RoomAudioRenderer />
-        {/* <ParticipantAudioTile /> */}
+  // const token = await getToken()
+  const handleClick =()=>{
+    navigate('/')
+  }
+  return (
+    <LiveKitRoom
+      video={true}
+      audio={true}
+      token={token}
+      serverUrl={serverUrl}
+      data-lk-theme="default"
+      style={{ height: '100vh' }}
+    >
+      {/* <ChatToggle /> */}
+      {/* <MyVideoConference />
+      <RoomAudioRenderer />
+      <div className='flex justify-center'>
+      <ControlBar controls={{leave: false, chat: true}} />
+      <Chat style={{display: 'none'}} />
+      <DisconnectButton onClick={handleClick} className='m-3 ml-1'>LeaveRoom</DisconnectButton> 
+      </div> */}
+      {/* <ParticipantAudioTile /> */}
 
-        <ControlBar />
-        {/* <Chat /> */}
-        {/* <ConnectionState /> */}
-        <DisconnectButton/>
-      </LiveKitRoom>
-    );
+      
+      {/* <ConnectionState /> */}
+      {/* <TrackToggle source={Track.Source.Microphone} />
+      <TrackToggle source={Track.Source.Camera} />
+      <StartAudio label="Click to allow audio playback" />*/}
+       <VideoConference/> 
+       
+    </LiveKitRoom>
+  );
   }
   
   function MyVideoConference() {
@@ -64,9 +88,8 @@ import {
     );
     return (
       <GridLayout tracks={tracks} style={{ height: 'calc(100vh - var(--lk-control-bar-height))' }}>
-        {/* The GridLayout accepts zero or one child. The child is used
-        as a template to render all passed in tracks. */}
-        <ParticipantTile />
+        <ParticipantTile/>
+          {/* <FocusToggle/> */}
       </GridLayout>
     );
   }

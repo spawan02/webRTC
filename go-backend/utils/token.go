@@ -14,6 +14,7 @@ func GetJoinToken(room, identity string) string {
 		RoomJoin: true,
 		Room:     room,
 	}
+
 	at.AddGrant(grant).
 		SetIdentity(identity).
 		SetValidFor(time.Hour)

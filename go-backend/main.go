@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"pion-webrtc/signaling"
-	"pion-webrtc/utils"
+
+	// "webrtc/rooms"
+	"webrtc/signaling"
+	"webrtc/utils"
 )
 
 func enableCors(w http.ResponseWriter) {
@@ -19,12 +21,17 @@ func enableCors(w http.ResponseWriter) {
 func main() {
 
 	http.HandleFunc("/", signaling.HandleWebSocket)
-	log.Println("Websocket is running on :8080")
-
+	// http.HandleFunc("/room", rooms.CreateRoom)
+	log.Println("Websocket running")
 	http.HandleFunc("/token", func(w http.ResponseWriter, r *http.Request) {
+
 		enableCors(w)
+		query := r.URL.Query()
+		param := query.Get("userId")
+
 		message := make(map[string]interface{})
-		token := utils.GetJoinToken("my-room", "identity")
+		log.Println(string(param))
+		token := utils.GetJoinToken("my-room", param)
 		message["token"] = token
 		jsonData, _ := json.Marshal(message)
 
