@@ -9,12 +9,21 @@ import (
 )
 
 func GetJoinToken(room, identity string) string {
-	at := auth.NewAccessToken(os.Getenv("LIVEKIT_API_KEY"), os.Getenv("LIVEKIT_API_SECRET"))
-	grant := &auth.VideoGrant{
-		RoomJoin: true,
-		Room:     room,
-	}
+	log.Println(string("here inside token"))
+	canSubscribe := true
+	canPublishData := true
+	token := os.Getenv("LIVEKIT_API_KEY")
+	secret := os.Getenv("LIVEKIT_API_SECRET")
+	at := auth.NewAccessToken(token, secret)
 
+	grant := &auth.VideoGrant{
+		RoomJoin:     true,
+		Room:         room,
+		RoomCreate:   true,
+		CanPublish:   &canPublishData,
+		CanSubscribe: &canSubscribe,
+	}
+	log.Println(grant.Room)
 	at.AddGrant(grant).
 		SetIdentity(identity).
 		SetValidFor(time.Hour)
