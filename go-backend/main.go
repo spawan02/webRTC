@@ -3,8 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"sync"
 	"webrtc/rooms"
 	"webrtc/signaling"
@@ -29,12 +31,29 @@ func enableCors(w http.ResponseWriter) {
 func main() {
 	http.HandleFunc("/", signaling.HandleWebSocket)
 	log.Println("Websocket running")
+
+	http.HandleFunc("/doc", func(w http.ResponseWriter, r *http.Request) {
+		enableCors(w)
+		err := utils.GetPdf()
+		if err != nil {
+			fmt.Println("error")
+		}
+		w.Header().Set("Content-Type", "application/pdf")
+		// w.Header().Set("Content-Disposition", "attachment; filename=demo.pdf")
+		w.WriteHeader(http.StatusOK)
+		file, _ := os.Open("./demo.pdf")
+		_, err = io.Copy(w, file)
+		if err != nil {
+			http.Error(w, "error sending the file", http.StatusInternalServerError)
+		}
+
+	})
+
 	http.HandleFunc("/token", func(w http.ResponseWriter, r *http.Request) {
 		enableCors(w)
 		query := r.URL.Query()
 		param := query.Get("userId")
 		// roomParam := query.Get("roomId")
-
 		role := r.Header.Get("role")
 		randRoomId := ""
 		if role == "admin" {
@@ -52,7 +71,6 @@ func main() {
 		value, exists := existingRoom["admin"]
 		if !exists || value == nil {
 			fmt.Println("value is nill")
-
 			return
 		}
 
